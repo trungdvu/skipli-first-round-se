@@ -1,0 +1,50 @@
+import { ReactNode, useCallback, useState } from 'react';
+import { createContext, fetcher } from '../utils/helpers';
+
+const [Provider, useAuth] = createContext<any>({
+  phoneNumber: localStorage.getItem('phoneNumber') || '',
+  createAccessCode: (phoneNumber: string) => Promise<boolean>,
+  validateAccessCode: (phoneNumber: string, code: string) => Promise<boolean>,
+});
+
+function AuthProvider({ children }: { children: ReactNode }) {
+  const [phoneNumber, setPhoneNumber] = useState<string>('');
+
+  const createAccessCode = useCallback(
+    async (phoneNumber: string): Promise<boolean> => {
+      const { success } = await fetcher(
+        `auth/access-code/${phoneNumber}`,
+        'POST'
+      );
+      return Boolean(success);
+    },
+    []
+  );
+
+  const validateAccessCode = useCallback(
+    async (phoneNumber: string, code: string): Promise<boolean> => {
+      const { success } = await fetcher(
+        `auth/access-code/${phoneNumber}/validation?accessCode=${code}`,
+        'POST'
+      );
+
+      if (success) {
+        setPhoneNumber({ phoneNumber });
+        localStorage.setItem('phoneNumber', JSON.stringify(phoneNumber));
+      }
+
+      return Boolean(success);
+    },
+    []
+  );
+
+  return (
+    <Provider
+      value={{ user: phoneNumber, createAccessCode, validateAccessCode }}
+    >
+      {children}
+    </Provider>
+  );
+}
+
+export { useAuth, AuthProvider };
