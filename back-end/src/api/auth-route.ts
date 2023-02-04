@@ -4,6 +4,7 @@ import cookie from "cookie";
 import { UserCol } from "../service/firebase";
 import { generateAccessCode } from "../util/helpers";
 import { COOKIE_ACCESS_TOKEN, JWT_SECRET } from "../config/variables";
+import { twilioClient, messagingServiceSid } from "../service/twilio";
 
 const authRoute = Router();
 
@@ -15,6 +16,15 @@ authRoute.post(
       const accessCode = generateAccessCode();
 
       await UserCol.doc(phoneNumber).set({ accessCode });
+
+      twilioClient.messages
+        .create({
+          messagingServiceSid,
+          to: phoneNumber,
+          body: `Skipli frist round se Verify Code: ${accessCode}`,
+        })
+        .then((message) => console.log(`[SMS]:`, message.sid))
+        .catch((err) => console.log(`[SMS]:`, err));
 
       res.status(201).json({ success: true });
     } catch (error) {
