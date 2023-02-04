@@ -15,7 +15,10 @@ authRoute.post(
       const { phoneNumber } = req.params;
       const accessCode = generateAccessCode();
 
-      await UserCol.doc(phoneNumber).set({ accessCode });
+      await UserCol.doc(phoneNumber).set(
+        { accessCode, favoriteGithubUsers: [] },
+        { mergeFields: ["accessCode"] }
+      );
 
       twilioClient.messages
         .create({
@@ -28,7 +31,8 @@ authRoute.post(
 
       res.status(201).json({ success: true });
     } catch (error) {
-      res.json({ success: false });
+      console.log("error:", error);
+      res.json({ success: false, error });
     }
   }
 );
@@ -45,7 +49,7 @@ authRoute.post(
       const user = doc.data();
 
       if (accessCode == user.accessCode) {
-        await UserCol.doc(phoneNumber).set({ accessCode: "" });
+        await UserCol.doc(phoneNumber).update({ accessCode: "" });
 
         const token = jwt.sign(
           {
