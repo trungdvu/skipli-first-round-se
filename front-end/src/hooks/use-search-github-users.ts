@@ -28,7 +28,7 @@ type GitHubUser = {
 export function useSearchGithubUsers() {
   const totalCountRef = useRef(0);
   const [page, setPage] = useState(1);
-  const [perPage] = useState(12);
+  const [perPage] = useState(20);
   const [items, setItems] = useState<GitHubUser[]>([]);
   const [loading, setLoading] = useState(false);
   const auth = useAuth();
@@ -56,12 +56,20 @@ export function useSearchGithubUsers() {
   };
 
   const handleToggleFavorite = async (githubUsername: string) => {
+    setItems((items) =>
+      items.map((item) =>
+        item.login === githubUsername
+          ? { ...item, is_favorite: !item.is_favorite }
+          : item
+      )
+    );
+
     const { success } = await fetcher(
       `/users/${auth.phoneNumber}/favorite-github?githubUsername=${githubUsername}`,
       'POST'
     );
 
-    if (success) {
+    if (!success) {
       setItems((items) =>
         items.map((item) =>
           item.login === githubUsername

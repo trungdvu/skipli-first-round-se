@@ -4,7 +4,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/auth-context';
 
 export function LoginPage() {
-  const [phoneNumber, setPhoneNumber] = useState('+84986835611');
+  const [phoneNumber, setPhoneNumber] = useState('');
   const [verifyCode, setVerifyCode] = useState('');
   const [isSentCode, setIsSentCode] = useState(false);
   const [loading, setLoading] = useState({
@@ -56,7 +56,7 @@ export function LoginPage() {
 
   return (
     <div className="min-h-screen">
-      <section className="flex max-w-5xl flex-col items-center pt-32">
+      <section className="mx-auto flex max-w-5xl flex-col items-center pt-32">
         <h1 className="text-center text-6xl font-extrabold tracking-tight text-white">
           <span className="text-[#ec1500]">SKIPLI</span> FIRST ROUND SE
         </h1>
@@ -66,7 +66,7 @@ export function LoginPage() {
           onSubmit={handleSendCode}
         >
           <input
-            className="h-14 flex-1 rounded-lg bg-slate-800 p-5 text-slate-300 shadow-sm transition duration-75 placeholder:text-slate-600 hover:bg-slate-700 focus:bg-slate-700 focus:outline-none"
+            className="h-14 flex-1 rounded-lg bg-slate-800 p-5 text-slate-300 shadow-sm transition duration-75 placeholder:text-slate-500 hover:bg-slate-700 focus:bg-slate-700 focus:outline-none"
             placeholder="+84986415726"
             value={phoneNumber}
             onChange={handleChange(setPhoneNumber)}
@@ -85,11 +85,11 @@ export function LoginPage() {
         >
           <input
             className={cn(
-              'h-14 flex-1 rounded-lg bg-slate-800 p-5 text-slate-300 shadow-sm transition duration-75 placeholder:text-slate-600',
+              'h-14 flex-1 rounded-lg bg-slate-800 p-5 text-slate-300 shadow-sm transition duration-75 placeholder:text-slate-500',
               { 'hover:bg-slate-700 focus:outline-none': isSentCode },
               { 'opacity-30': !isSentCode }
             )}
-            disabled={!isSentCode}
+            disabled={!isSentCode || loading.sendingCode}
             placeholder="Verify code"
             value={verifyCode}
             onChange={handleChange(setVerifyCode)}
@@ -100,7 +100,7 @@ export function LoginPage() {
               { 'hover:bg-sky-400 focus:outline-none': isSentCode },
               { 'bg-opacity-30 text-gray-200': !isSentCode }
             )}
-            disabled={!isSentCode}
+            disabled={!isSentCode || loading.submitting}
             type="submit"
           >
             {loading.submitting ? 'Submitting...' : 'Submit'}

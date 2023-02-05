@@ -33,7 +33,7 @@ export function createContext<T>(defaultValue: T, options: Options = {}) {
 export async function fetcher(
   url: string,
   method: 'GET' | 'POST' = 'GET',
-  data = undefined
+  data: any = undefined
 ) {
   const res = await fetch(`${API_BASE}/${url}`, {
     method,

@@ -1,0 +1,126 @@
+import cn from 'classnames';
+import { useEffect, useState } from 'react';
+import { useAuth } from '../contexts/auth-context';
+import { fetcher } from '../utils/helpers';
+
+type GithubUser = {
+  login: string;
+  id: number;
+  node_id: string;
+  avatar_url: string;
+  gravatar_id: string;
+  url: string;
+  html_url: string;
+  followers_url: string;
+  following_url: string;
+  gists_url: string;
+  starred_url: string;
+  subscriptions_url: string;
+  organizations_url: string;
+  repos_url: string;
+  events_url: string;
+  received_events_url: string;
+  type: string;
+  site_admin: false;
+  name: string;
+  company: string | null;
+  blog: string;
+  location: string;
+  email: string | null;
+  hireable: boolean | null;
+  bio: string | null;
+  twitter_username: string | null;
+  public_repos: number;
+  public_gists: number;
+  followers: number;
+  following: number;
+  created_at: string;
+  updated_at: string;
+};
+
+export function ProfilePage() {
+  const auth = useAuth();
+  const [githubUsers, setGithubUsers] = useState<GithubUser[]>([
+    {
+      login: 'trungdvu',
+      id: 96437142,
+      node_id: 'U_kgDOBb-Dlg',
+      avatar_url: 'https://avatars.githubusercontent.com/u/96437142?v=4',
+      gravatar_id: '',
+      url: 'https://api.github.com/users/trungdvu',
+      html_url: 'https://github.com/trungdvu',
+      followers_url: 'https://api.github.com/users/trungdvu/followers',
+      following_url:
+        'https://api.github.com/users/trungdvu/following{/other_user}',
+      gists_url: 'https://api.github.com/users/trungdvu/gists{/gist_id}',
+      starred_url:
+        'https://api.github.com/users/trungdvu/starred{/owner}{/repo}',
+      subscriptions_url: 'https://api.github.com/users/trungdvu/subscriptions',
+      organizations_url: 'https://api.github.com/users/trungdvu/orgs',
+      repos_url: 'https://api.github.com/users/trungdvu/repos',
+      events_url: 'https://api.github.com/users/trungdvu/events{/privacy}',
+      received_events_url:
+        'https://api.github.com/users/trungdvu/received_events',
+      type: 'User',
+      site_admin: false,
+      name: 'Trung Vu',
+      company: null,
+      blog: '',
+      location: 'HCMC, VN',
+      email: null,
+      hireable: null,
+      bio: null,
+      twitter_username: null,
+      public_repos: 13,
+      public_gists: 0,
+      followers: 2,
+      following: 0,
+      created_at: '2021-12-20T16:37:28Z',
+      updated_at: '2023-01-22T08:32:36Z',
+    },
+  ]);
+
+  const fetchFavoriteGithubUsernames = async () => {
+    const { favoriteGithubUsers } = await auth.getUser();
+    const { items } = await fetcher('/github/users', 'POST', {
+      usernames: favoriteGithubUsers,
+    });
+
+    // setGithubUsers(items);
+  };
+
+  useEffect(() => {
+    fetchFavoriteGithubUsernames();
+  }, []);
+
+  return (
+    <div className="min-h-screen">
+      <section className="mt-10 flex max-w-5xl flex-col items-center justify-center mx-auto">
+        <h3 className="text-center text-xl tracking-tight text-slate-300">
+          {auth.phoneNumber}
+        </h3>
+        <h1 className="text-center text-5xl font-extrabold tracking-tight text-white">
+          My Favorite Github Users
+        </h1>
+
+        <div className="w-full">
+          {githubUsers.map(({ login, avatar_url }, index) => (
+            <div key={index} className="w-full">
+              <div>
+                <div className="relative mx-auto h-24 w-24 flex-none overflow-hidden rounded-full">
+                  <img
+                    className="h-full w-full"
+                    src={avatar_url}
+                    alt="avatar_img"
+                  />
+                </div>
+
+                <p>{login}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+    </div>
+  );
+}

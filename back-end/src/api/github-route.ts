@@ -23,7 +23,7 @@ githubRoute.get("/search/users", async (req: Request, res: Response) => {
 
     json.items = json.items.map((item: any) => ({
       ...item,
-      is_favorite: user.favoriteGithubUsers.includes(item.login),
+      is_favorite: user.favoriteGithubUsers?.includes(item.login),
     }));
 
     res.status(200).json(json);
@@ -40,6 +40,24 @@ githubRoute.get("/users/:username", async (req: Request, res: Response) => {
     const json = await userRes.json();
 
     res.status(200).json(json);
+  } catch (error) {
+    res.json({ error: "Error fetching" });
+  }
+});
+
+githubRoute.post("/users", async (req: Request, res: Response) => {
+  try {
+    const { usernames } = req.body;
+
+    const records = await Promise.all(
+      usernames.map(async (username: string) => {
+        const userRes = await fetch(`https://api.github.com/users/${username}`);
+        const json = await userRes.json();
+        return json;
+      })
+    );
+
+    res.status(200).json({ items: records });
   } catch (error) {
     res.json({ error: "Error fetching" });
   }

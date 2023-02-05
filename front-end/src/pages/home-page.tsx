@@ -1,11 +1,9 @@
 import cn from 'classnames';
 import { useState } from 'react';
-import { useAuth } from '../contexts/auth-context';
 import { useSearchGithubUsers } from '../hooks/use-search-github-users';
 
 export function HomePage() {
   const [searchText, setSearchText] = useState('');
-  const { phoneNumber } = useAuth();
   const {
     items,
     loading,
@@ -16,18 +14,11 @@ export function HomePage() {
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
-    await handleSearch(searchText);
+    await handleSearch(searchText, 0);
   };
 
   return (
     <div className="min-h-screen">
-      <nav className="flex h-20 items-center justify-between bg-slate-800 px-24">
-        <h1 className="text-2xl font-extrabold text-white">Skipli</h1>
-        <div className="flex h-14 w-14 items-center justify-start overflow-hidden rounded-lg text-white">
-          {phoneNumber}
-        </div>
-      </nav>
-
       <section className="mx-auto mt-5 flex max-w-4xl flex-col items-center justify-center">
         <form
           className="flex w-full max-w-md justify-center space-x-5"
@@ -49,7 +40,7 @@ export function HomePage() {
       </section>
 
       <section className="mx-auto mt-5 grid max-w-4xl gap-5 px-5 sm:grid-cols-3 md:grid-cols-4">
-        {items.map(({ login, avatar_url, type, is_favorite }) => (
+        {items.map(({ login, avatar_url, type, is_favorite, html_url }) => (
           <div
             key={login}
             className="relative overflow-hidden rounded-lg bg-slate-800 p-8 text-center"
@@ -85,9 +76,14 @@ export function HomePage() {
             </div>
 
             <div className="mt-8 flex flex-col items-center font-medium">
-              <h5 className="text-lg text-sky-400 transition-colors duration-500">
+              <a
+                href={html_url}
+                className="text-lg text-sky-400 transition-colors duration-500"
+                target="_blank"
+                rel="noreferrer"
+              >
                 {login}
-              </h5>
+              </a>
               <p className="text-slate-500 transition-colors duration-500">
                 {type}
               </p>
@@ -101,7 +97,7 @@ export function HomePage() {
           <ul className="inline-flex space-x-px">
             <li>
               <button
-                className="ml-0 w-24 rounded-l-lg border border-gray-300 bg-white px-3 py-2 leading-tight text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                className="ml-0 w-24 rounded-l-lg border border-slate-700 px-3 py-2 leading-tight text-slate-300 hover:bg-slate-700/50"
                 onClick={() => handlePageChange('pre', searchText)}
               >
                 Previous
@@ -109,7 +105,7 @@ export function HomePage() {
             </li>
             <li>
               <button
-                className="w-24 rounded-r-lg border border-gray-300 bg-white px-3 py-2 leading-tight text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                className="ml-0 w-24 rounded-r-lg border border-slate-700 px-3 py-2 leading-tight text-slate-300 hover:bg-slate-700/50"
                 onClick={() => handlePageChange('next', searchText)}
               >
                 Next
