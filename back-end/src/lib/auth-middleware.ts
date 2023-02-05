@@ -18,7 +18,6 @@ export const validateAuth = async (
 
       const doc = await UserCol.doc(phoneNumber).get();
       user = doc.data();
-      console.log("user trung:", user);
 
       if (!user) {
         throw new Error("Not real user");

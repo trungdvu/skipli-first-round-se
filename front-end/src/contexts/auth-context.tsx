@@ -34,7 +34,7 @@ function AuthProvider({ children }: { children: ReactNode }) {
 
       if (success) {
         setPhoneNumber(phoneNumber);
-        localStorage.setItem('phoneNumber', JSON.stringify(phoneNumber));
+        localStorage.setItem('phoneNumber', phoneNumber);
       }
 
       return success;
