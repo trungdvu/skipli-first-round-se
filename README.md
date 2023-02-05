@@ -12,10 +12,10 @@ https://user-images.githubusercontent.com/96437142/216833433-4dfcb943-a533-4e67-
 ```bash
   cd backend
 ```
-- Create `.env` with folloing variables at root
+- Create `.env` with folloing variables at root. Needed to hide these twilio variables, otherwise they will detech and reset the value.
 ```js
-PORT=
-NODE_ENV=
+PORT=8080
+NODE_ENV=development
 TWILIO_ACCOUNT_SID=
 TWILIO_AUTH_TOKEN=
 TWILIO_MESSAGING_SERVICE_SID=
