@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
+import { useAuth } from '../contexts/auth-context';
 import { fetcher } from '../utils/helpers';
 
 type GitHubUser = {
@@ -21,6 +22,7 @@ type GitHubUser = {
   type: string;
   site_admin: boolean;
   score: number;
+  is_favorite: boolean;
 };
 
 export function useSearchGithubUsers() {
@@ -29,6 +31,7 @@ export function useSearchGithubUsers() {
   const [perPage] = useState(12);
   const [items, setItems] = useState<GitHubUser[]>([]);
   const [loading, setLoading] = useState(false);
+  const auth = useAuth();
 
   const handleSearch = async (text: string, customPage?: number) => {
     setLoading(true);
@@ -52,5 +55,28 @@ export function useSearchGithubUsers() {
     handleSearch(text, newPage);
   };
 
-  return { items, loading, handleSearch, handlePageChange };
+  const handleToggleFavorite = async (githubUsername: string) => {
+    const { success } = await fetcher(
+      `/users/${auth.phoneNumber}/favorite-github?githubUsername=${githubUsername}`,
+      'POST'
+    );
+
+    if (success) {
+      setItems((items) =>
+        items.map((item) =>
+          item.login === githubUsername
+            ? { ...item, is_favorite: !item.is_favorite }
+            : item
+        )
+      );
+    }
+  };
+
+  return {
+    items,
+    loading,
+    handleSearch,
+    handlePageChange,
+    handleToggleFavorite,
+  };
 }

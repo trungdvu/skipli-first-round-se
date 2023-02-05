@@ -32,4 +32,12 @@ usersRoute.post(
   }
 );
 
+usersRoute.get("/:phoneNumber", async (_: Request, res: Response) => {
+  try {
+    res.status(200).json({ success: true, data: res.locals.user });
+  } catch (error) {
+    res.json({ success: false });
+  }
+});
+
 export { usersRoute };

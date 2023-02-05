@@ -10,6 +10,7 @@ function urlBuilder(base = "", query = {}) {
 githubRoute.get("/search/users", async (req: Request, res: Response) => {
   try {
     const { q, page, per_page } = req.query;
+    const user = res.locals.user;
 
     const usersRes = await fetch(
       urlBuilder("https://api.github.com/search/users", {
@@ -19,6 +20,11 @@ githubRoute.get("/search/users", async (req: Request, res: Response) => {
       })
     );
     const json = await usersRes.json();
+
+    json.items = json.items.map((item: any) => ({
+      ...item,
+      is_favorite: user.favoriteGithubUsers.includes(item.login),
+    }));
 
     res.status(200).json(json);
   } catch (error) {

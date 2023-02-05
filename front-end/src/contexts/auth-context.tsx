@@ -5,6 +5,7 @@ type AuthContextType = {
   phoneNumber: string;
   createAccessCode: (phoneNumber: string) => Promise<boolean>;
   validateAccessCode: (phoneNumber: string, code: string) => Promise<boolean>;
+  getUser: () => Promise<{ accessCode: string; favoriteGithubUsers: string[] }>;
 };
 
 const [Provider, useAuth] = createContext<AuthContextType>(null!);
@@ -42,8 +43,16 @@ function AuthProvider({ children }: { children: ReactNode }) {
     []
   );
 
+  const getUser = async () => {
+    const { data } = await fetcher(`/users/${phoneNumber}`);
+
+    return data;
+  };
+
   return (
-    <Provider value={{ phoneNumber, createAccessCode, validateAccessCode }}>
+    <Provider
+      value={{ phoneNumber, createAccessCode, validateAccessCode, getUser }}
+    >
       {children}
     </Provider>
   );
