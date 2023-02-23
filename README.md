@@ -50,4 +50,3 @@ TWILIO_MESSAGING_SERVICE_SID=
 <img width="1792" alt="Screenshot 2023-02-05 at 11 46 12 PM" src="https://user-images.githubusercontent.com/96437142/216832511-10587eb7-53c8-4769-8d3e-4f4a6ea8c5c5.png">
 
 ### Profile
-<img width="1792" alt="Screenshot 2023-02-05 at 11 45 30 PM" src="https://user-images.githubusercontent.com/96437142/216832465-d7df2bd8-1d79-479f-9bc2-c63866601776.png">
